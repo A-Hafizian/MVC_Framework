@@ -53,14 +53,14 @@ class MysqlBaseModel extends BaseModel
     }
   }
 
-  public function remove():int  
+  public function remove(): int
   {
-    $record_id = $this->{$this->primaryKey};  
+    $record_id = $this->{$this->primaryKey};
     return $this->delete([$this->primaryKey => $record_id]);
   }
-  public function save():int  
+  public function save(): int
   {
-    $record_id = $this->{$this->primaryKey};  
+    $record_id = $this->{$this->primaryKey};
     return $this->update($this->attributes, [$this->primaryKey => $record_id]);
   }
 
@@ -74,20 +74,27 @@ class MysqlBaseModel extends BaseModel
   #Read (select) single | multiple
   public function find($id): object
   {
-    $result = $this->connection->get($this->table,'*' ,[$this->primaryKey => $id]);
-    if(is_null($result)) 
+    $result = $this->connection->get($this->table, '*', [$this->primaryKey => $id]);
+    if (is_null($result))
       return (object)null;
-    foreach($result as $columns => $value){
-      $this->attributes[$columns] = $value; 
+    foreach ($result as $columns => $value) {
+      $this->attributes[$columns] = $value;
     }
     return $this;
   }
 
-  public function getAll(): array{
-    return $this->connection->select($this->table, '*');
-  }
-  public function get(array $columns, array $where): array
+  public function getAll(): array
   {
+    return $this->get(['*'], []);
+  }
+  public function get($columns, array $where): array
+  {
+    $page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? $_GET['page'] : 1;
+
+    $start = ($page - 1) * $this->pageSize;
+    $where['LIMIT'] = [$start, $this->pageSize];
+
+
     return $this->connection->select($this->table, $columns, $where);
   }
 
@@ -104,6 +111,13 @@ class MysqlBaseModel extends BaseModel
     return $this->connection->delete($this->table, $where);
   }
 
-
+  public function count(array $where): int
+  {
+    return $this->connection->count($this->table, $where);
+  }
+  public function sum($column, array $where): int
+  {
+    return $this->connection->sum($this->table, $column, $where);
+  }
+  
 }
-

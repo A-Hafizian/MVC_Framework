@@ -30,7 +30,7 @@ class JsonBaseModel extends BaseModel
         $table_data = $this->read_table();
         $table_data[] = $data;
         $this->write_table($table_data);
-        my_varDump($table_data);
+       // my_varDump($table_data);
         return 1;
     }
 

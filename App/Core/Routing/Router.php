@@ -45,7 +45,7 @@ class Router
         //echo $request->method() . "___" . $request->uri();
         foreach ($this->routes as $route) {
             if (!$this->invalidRequest($route)) {
-                return false;
+                continue;
             }
             if ($this->regex_matched($route)) {
                 return $route;
@@ -68,7 +68,6 @@ class Router
                 $request->add_route_param($key, $value);
             }
         }
-        my_varDump($request);
         return true;
     }
     public function invalidRequest($route)

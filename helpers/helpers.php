@@ -17,3 +17,7 @@ function view($path, $data = [])
     include_once BASEPATH."views/$path.php";
 
 }
+function xss_clean($str)
+{
+    return filter_var(htmlspecialchars($str), FILTER_SANITIZE_STRING);
+}
